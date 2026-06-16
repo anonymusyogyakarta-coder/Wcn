@@ -11,10 +11,9 @@ async function handleMessages(sock, chatUpdate) {
         const isGroup = from.endsWith("@g.us");
         const type = Object.keys(m.message)[0];
         
-        // Anti-Delete / Anti View-Once Tracker (Pondasi .rvo premium)
+        // Anti View-Once Tracker
         if (type === "viewOnceMessage" || type === "viewOnceMessageV2") {
             console.log(`\n📸 [WCN DETECTOR] Mendeteksi Pesan View-Once dari: ${m.key.participant || from}`);
-            // Logika auto forward media view once ke owner bisa lo kembangin disini nanti, Masbrok
         }
 
         let body = type === "conversation" ? m.message.conversation : 
@@ -33,13 +32,21 @@ async function handleMessages(sock, chatUpdate) {
         switch (command) {
             case "menu":
             case "help":
-                const textMenu = `🔥 *${config.botName} PREMIUM* 🔥
+                const textMenu = `🔥 *${config.botName} PREMIUM v2.5* 🔥
 👨‍💻 *Owner:* ${config.ownerName}
 ⏱️ *Uptime:* ${helpers.getRuntime()}
 📅 *Waktu:* ${helpers.getWibTime()}
 
+📥 *MEDIA DOWNLOADER MODULES*
+👉 \`${config.prefix}ytdm <link>\` - Download YT Jadi Musik (Audio)
+👉 \`${config.prefix}ytdv <link>\` - Download Video YouTube
+👉 \`${config.prefix}ttdm <link>\` - Download TikTok Jadi Musik (Audio)
+👉 \`${config.prefix}ttdv <link>\` - Download Video TikTok No Watermark
+👉 \`${config.prefix}igdwv <link>\` - Download Video Instagram No WM
+👉 \`${config.prefix}igdwm <link>\` - Download Video IG Jadi Voice Note
+
 🤖 *AI & IMAGING COMMANDS*
-👉 \`${config.prefix}ai <pertanyaan>\` - Tanya Jawab Pintar GPT
+👉 \`${config.prefix}ai <text>\` - Tanya Jawab Pintar GPT
 👉 \`${config.prefix}generate <prompt>\` - Menggambar Pake AI
 👉 \`${config.prefix}neko\` - Kirim Foto Anime Random
 
@@ -49,16 +56,76 @@ async function handleMessages(sock, chatUpdate) {
 👉 \`${config.prefix}s\` - Mengonversi Gambar ke Stiker
 
 👥 *GROUP MANAGEMENT*
-👉 \`${config.prefix}kick\` - Mengeluarkan Member (Harus Admin)
+👉 \`${config.prefix}kick\` - Mengeluarkan Member (Admin)
 👉 \`${config.prefix}add\` - Memasukkan Member Baru
 
-⚙️ *PREMIUM MODULES*
-👉 \`${config.prefix}rvo\` - Penjelasan Eksekusi Sistem Anti View Once
+⚙️ *PREMIUM TRACKING*
+👉 \`${config.prefix}rvo\` - Sistem Anti View Once
 
 _WCN Bot System pure responsive console base._`;
                 await reply(textMenu);
                 break;
 
+            // ================= [ YOUTUBE DOWNLOADER ] =================
+            case "ytdm":
+                if (!q) return reply(`Contoh: ${config.prefix}ytdm https://youtube.com/watch?v=...`);
+                await reply("⏳ Loading mendownload audio YouTube, tunggu bentar...");
+                try {
+                    // Integrasi API downloader publik gratisan
+                    const resYtdm = await axios.get(`https://api.mymiku.icu/api/download/ytmp3?url=${encodeURIComponent(q)}`);
+                    await sock.sendMessage(from, { audio: { url: resYtdm.data.result.downloadUrl }, mimetype: 'audio/mp4', ptt: false }, { quoted: m });
+                } catch (err) { await reply("❌ Gagal mendownload audio YouTube. Pastikan link lo bener!"); }
+                break;
+
+            case "ytdv":
+                if (!q) return reply(`Contoh: ${config.prefix}ytdv https://youtube.com/watch?v=...`);
+                await reply("⏳ Memproses video YouTube pesanan lo...");
+                try {
+                    const resYtdv = await axios.get(`https://api.mymiku.icu/api/download/ytmp4?url=${encodeURIComponent(q)}`);
+                    await sock.sendMessage(from, { video: { url: resYtdv.data.result.downloadUrl }, caption: "✨ Berhasil didownload oleh WCN!" }, { quoted: m });
+                } catch (err) { await reply("❌ Gagal mengunduh video YouTube."); }
+                break;
+
+            // ================= [ TIKTOK DOWNLOADER ] =================
+            case "ttdm":
+                if (!q) return reply(`Contoh: ${config.prefix}ttdm https://vm.tiktok.com/...`);
+                await reply("⏳ Narik lagu dari TikTok, sabar ya...");
+                try {
+                    const resTtdm = await axios.get(`https://api.mymiku.icu/api/download/tiktok?url=${encodeURIComponent(q)}`);
+                    await sock.sendMessage(from, { audio: { url: resTtdm.data.result.audio }, mimetype: 'audio/mp4', ptt: false }, { quoted: m });
+                } catch (err) { await reply("❌ Gagal mengambil audio TikTok."); }
+                break;
+
+            case "ttdv":
+                if (!q) return reply(`Contoh: ${config.prefix}ttdv https://vm.tiktok.com/...`);
+                await reply("⏳ Video TikTok No Watermark lagi diproses...");
+                try {
+                    const resTtdv = await axios.get(`https://api.mymiku.icu/api/download/tiktok?url=${encodeURIComponent(q)}`);
+                    await sock.sendMessage(from, { video: { url: resTtdv.data.result.videoNoWm }, caption: "🔥 TikTok No Watermark Sukses!" }, { quoted: m });
+                } catch (err) { await reply("❌ Gagal mendownload video TikTok."); }
+                break;
+
+            // ================= [ INSTAGRAM DOWNLOADER ] =================
+            case "igdwv":
+                if (!q) return reply(`Contoh: ${config.prefix}igdwv https://www.instagram.com/reel/...`);
+                await reply("⏳ Mengambil video Instagram, tunggu bentar...");
+                try {
+                    const resIg = await axios.get(`https://api.mymiku.icu/api/download/instagram?url=${encodeURIComponent(q)}`);
+                    await sock.sendMessage(from, { video: { url: resIg.data.result[0].url }, caption: "📸 Instagram Reel/Video Berhasil!" }, { quoted: m });
+                } catch (err) { await reply("❌ Gagal mendownload media Instagram."); }
+                break;
+
+            case "igdwm":
+                if (!q) return reply(`Contoh: ${config.prefix}igdwm https://www.instagram.com/reel/...`);
+                await reply("⏳ Mengonversi video IG lo jadi Voice Note...");
+                try {
+                    const resIgM = await axios.get(`https://api.mymiku.icu/api/download/instagram?url=${encodeURIComponent(q)}`);
+                    // ptt: true bikin audio yang dikirim berupa rekaman suara/Voice Note suara langsung
+                    await sock.sendMessage(from, { audio: { url: resIgM.data.result[0].url }, mimetype: 'audio/mp4', ptt: true }, { quoted: m });
+                } catch (err) { await reply("❌ Gagal mengubah video IG menjadi Voice Note."); }
+                break;
+
+            // ================= [ FITUR LAINNYA ] =================
             case "ai":
                 if (!q) return reply("Contoh: .ai mengapa langit berwarna biru?");
                 await sock.sendPresenceUpdate("composing", from);
@@ -108,3 +175,4 @@ _WCN Bot System pure responsive console base._`;
 }
 
 module.exports = { handleMessages };
+            
