@@ -32,7 +32,15 @@ async function startWcnBot() {
 
     const sessionPath = path.join(__dirname, 'wcn_premium_session');
     const { state, saveCreds } = await useMultiFileAuthState(sessionPath);
-    const { version } = await fetchLatestBaileysVersion();
+    
+    // Fallback versi WA manual jika fetch API wa bermasalah
+    let version;
+    try {
+        const latest = await fetchLatestBaileysVersion();
+        version = latest.version;
+    } catch {
+        version = [2, 3000, 1015901307]; 
+    }
 
     const sock = makeWASocket({
         version,
@@ -42,7 +50,8 @@ async function startWcnBot() {
             creds: state.creds,
             keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "silent" })),
         },
-        browser: [config.botName, "Safari", "1.0.0"],
+        // 🔥 DISINI KUNCINYA: Menyamar jadi Chrome Ubuntu biar gak di-banned / connection closed pas pairing
+        browser: ["Ubuntu", "Chrome", "20.0.04"],
         markOnlineOnConnect: true
     });
 
@@ -96,8 +105,8 @@ async function startWcnBot() {
     });
 }
 
-// Fitur Anti-Crash Proteksi Utama (Biar kalo ada eror fitur, bot ga mati)
-process.on("uncaughtException", (err) => { console.error("🛡️ [PROTECTION] Terjadi eror tak terduga:", err); });
-process.on("unhandledRejection", (reason, p) => { console.error("🛡️ [PROTECTION] Rejection terdeteksi:", reason, p); });
+process.on("uncaughtException", (err) => { console.error("🛡️ [PROTECTION] Terjadi eror:", err.message); });
+process.on("unhandledRejection", (reason, p) => { console.error("🛡️ [PROTECTION] Rejection:", reason); });
 
 startWcnBot();
+            
