@@ -5,7 +5,7 @@
   <img src="https://img.shields.io/badge/STATUS-ACTIVE%2024%2F7-brightgreen?style=for-the-badge" alt="Status">
 </p>
 
-<h1 align="center">⚡ WCN PREMIUM BOT ⚡</h1>
+<h1 align="center"> WCN PREMIUM BOT </h1>
 <p align="center"><b>Pure Termux CLI Architecture • High Performance Multi-Device WhatsApp Bot</b></p>
 
 ---
