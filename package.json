@@ -1,0 +1,16 @@
+{
+  "name": "wcn-premium-bot",
+  "version": "2.5.0",
+  "description": "Premium WhatsApp Multi-Device Bot Pure CLI Architecture",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.6.0",
+    "axios": "^1.6.0",
+    "pino": "^8.16.0",
+    "moment-timezone": "^0.5.43"
+  }
+}
