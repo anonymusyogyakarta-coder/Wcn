@@ -19,7 +19,10 @@
 
 | Kategori | Perintah | Fungsi Utama | Status |
 | :--- | :--- | :--- | :--- |
-| 🤖 **Artificial Intelligence** | `.ai <text>` | Tanya jawab pintar berbasis GPT-3.5 Turbo | `AKTIF` |
+| 📹 **Media Downloader** | `.ytdv` / `.ytdm` | Download Video & Musik (.mp3) dari YouTube | `BARU` |
+| 🎵 **TikTok Saver** | `.ttdv` / `.ttdm` | Unduh Video TikTok No WM & Musik TikTok | `BARU` |
+| 📸 **Instagram Grabber** | `.igdwv` / `.igdwm`| Ambil Video IG No WM & Ubah Jadi Voice Note | `BARU` |
+| 🤖 **Artificial Intelligence**| `.ai <text>` | Tanya jawab pintar berbasis GPT-3.5 Turbo | `AKTIF` |
 | 🎨 **Imaging AI** | `.generate <prompt>` | Menggambar foto/ilustrasi siber real-time | `AKTIF` |
 | 📸 **Cyber Tracking** | `.rvo` | Auto-detect & lacak log pesan *View Once* | `PREMIUM` |
 | 🌤️ **Information Tools** | `.cuaca <kota>` | Cek kondisi & kelembapan cuaca terkini | `AKTIF` |
